@@ -51,7 +51,7 @@
     index += 5;
   } while (lucky >= 1000000);
   
-  return lucky % 10000;
+  return accDiv((lucky % 10000),100);
 }
 
 var $serverSeed = $('#serverSeed');
@@ -83,6 +83,24 @@ $('form').keyup(function() {
     $roll.val(getRoll(serverSeed, clientSeed, nonce));
   }
 }).keyup();
+        function accDiv(arg1, arg2) {
+    var t1 = 0, t2 = 0, r1, r2;
+    try {
+        t1 = arg1.toString().split(".")[1].length;
+    }
+    catch (e) {
+    }
+    try {
+        t2 = arg2.toString().split(".")[1].length;
+    }
+    catch (e) {
+    }
+    with (Math) {
+        r1 = Number(arg1.toString().replace(".", ""));
+        r2 = Number(arg2.toString().replace(".", ""));
+        return parseFloat((r1 / r2) * pow(10, t2 - t1).toFixed(5));
+    }
+}
   </script>
 
 </html>
