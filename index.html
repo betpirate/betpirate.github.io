@@ -71,7 +71,7 @@ $('form').keyup(function() {
   var clientSeed = $clientSeed.val();
   var nonce = $nonce.val();
 
-  $serverSeedHash.val(serverSeed ? sha256(serverSeed) : '<Empty Server Seed>');
+  $serverSeedHash.val(serverSeed ? sha512(serverSeed) : '<Empty Server Seed>');
   
   if (!serverSeed) {
     $roll.val('<Empty Server Seed>');
