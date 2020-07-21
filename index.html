@@ -1,7 +1,88 @@
 <!DOCTYPE html>
-<html>
-<body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.3.2/sha256.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha512/0.2.2/sha512.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-url-parser/2.3.1/purl.min.js"></script>
+
+</head>
+<div class="container">
+  <h1>Bet Verifier</h1>
+  <form>
+    <div class="form-group">
+      <label for="serverSeed">Server Seed</label>
+      <input id="serverSeed" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="clientSeed">Client Seed</label>
+      <input id="clientSeed" type="text"  class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="nonce">Nonce</label>
+      <input id="nonce" type="text" class="form-control">
+    </div>
+    <hr>
+    <div class="form-group">
+      <label for="serverSeedHash">Server Seed (Hashed)</label>
+      <input id="serverSeedHash" type="text" class="form-control" disabled>
+    </div>
+    <div class="form-group">
+      <label for="roll">Roll</label>
+      <input id="roll" type="text" class="form-control" disabled>
+    </div>
+  </form>
+</div>
+      <script>
+  function getRoll(serverSeed, clientSeed, nonce) {
+  var hash = sha512(clientSeed + serverSeed + nonce);
+  var index = 0;
+  do {
+    var lucky = parseInt(hash.substr(index, 5), 16);
+    index += 5;
+  } while (lucky >= 1000000);
+  
+  return lucky % 10000;
+}
+
+var $serverSeed = $('#serverSeed');
+var $clientSeed = $('#clientSeed');
+var $nonce = $('#nonce');
+var $serverSeedHash = $('#serverSeedHash');
+var $roll = $('#roll');
+
+var url = $.url(document.location.href);
+
+$serverSeed.val(url.param('serverSeed'));
+$clientSeed.val(url.param('clientSeed'));
+$nonce.val(url.param('nonce'));
+
+$('form').keyup(function() {
+  var serverSeed = $serverSeed.val();
+  var clientSeed = $clientSeed.val();
+  var nonce = $nonce.val();
+
+  $serverSeedHash.val(serverSeed ? sha256(serverSeed) : '<Empty Server Seed>');
+  
+  if (!serverSeed) {
+    $roll.val('<Empty Server Seed>');
+  } else if (!clientSeed) {
+    $roll.val('<Empty Client Seed>');
+  } else if (nonce === '') {
+    $roll.val('<Empty Nonce>');
+  } else {
+    $roll.val(getRoll(serverSeed, clientSeed, nonce));
+  }
+}).keyup();
+  </script>
+
 </html>
+
